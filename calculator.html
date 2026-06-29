@@ -21,8 +21,32 @@
             padding: 20px;
         }
 
+        :root {
+            --calculator-bg: #ffffff;
+            --display-bg: #1a1a1a;
+            --display-color: #ffffff;
+            --button-bg: #f0f0f0;
+            --button-hover: #e0e0e0;
+            --button-color: #333333;
+            --toggle-bg: rgba(255, 255, 255, 0.75);
+            --toggle-color: #333333;
+            --toggle-hover: rgba(255, 255, 255, 0.95);
+        }
+
+        .calculator.dark-theme {
+            --calculator-bg: #1b1f2a;
+            --display-bg: #334155;
+            --display-color: #e2e8f0;
+            --button-bg: #2d3748;
+            --button-hover: #3b475d;
+            --button-color: #f8fafc;
+            --toggle-bg: rgba(45, 55, 72, 0.9);
+            --toggle-color: #f8fafc;
+            --toggle-hover: rgba(59, 71, 93, 0.98);
+        }
+
         .calculator {
-            background: #ffffff;
+            background: var(--calculator-bg);
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             padding: 30px;
@@ -30,9 +54,32 @@
             width: 100%;
         }
 
+        .calculator-header {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 15px;
+        }
+
+        .theme-toggle {
+            background: var(--toggle-bg);
+            color: var(--toggle-color);
+            border: none;
+            border-radius: 999px;
+            padding: 10px 16px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .theme-toggle:hover {
+            background: var(--toggle-hover);
+            transform: translateY(-1px);
+        }
+
         .display {
-            background: #1a1a1a;
-            color: #ffffff;
+            background: var(--display-bg);
+            color: var(--display-color);
             font-size: 2.5rem;
             padding: 20px;
             text-align: right;
@@ -53,7 +100,7 @@
         }
 
         button {
-            background: #f0f0f0;
+            background: var(--button-bg);
             border: none;
             border-radius: 10px;
             font-size: 1.5rem;
@@ -61,11 +108,11 @@
             cursor: pointer;
             transition: all 0.2s;
             font-weight: 600;
-            color: #333;
+            color: var(--button-color);
         }
 
         button:hover {
-            background: #e0e0e0;
+            background: var(--button-hover);
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
@@ -108,7 +155,10 @@
     </style>
 </head>
 <body>
-    <div class="calculator">
+    <div class="calculator" id="calculator">
+        <div class="calculator-header">
+            <button class="theme-toggle" id="themeToggle" type="button" onclick="toggleTheme()">Темный</button>
+        </div>
         <div class="display" id="display">0</div>
         <div class="buttons">
             <button class="clear" onclick="clearDisplay()">C</button>
@@ -137,9 +187,24 @@
     </div>
 
     <script>
+        const calculator = document.getElementById('calculator');
+        const themeToggle = document.getElementById('themeToggle');
         let display = document.getElementById('display');
         let currentInput = '0';
         let shouldResetDisplay = false;
+
+        function applyTheme(theme) {
+            const isDark = theme === 'dark';
+            calculator.classList.toggle('dark-theme', isDark);
+            themeToggle.textContent = isDark ? 'Светлый' : 'Темный';
+        }
+
+        function toggleTheme() {
+            const isDark = calculator.classList.contains('dark-theme');
+            const nextTheme = isDark ? 'light' : 'dark';
+            applyTheme(nextTheme);
+            localStorage.setItem('calculatorTheme', nextTheme);
+        }
 
         function updateDisplay() {
             display.textContent = currentInput;
@@ -261,6 +326,9 @@
                 deleteLast();
             }
         });
+
+        const savedTheme = localStorage.getItem('calculatorTheme') || 'light';
+        applyTheme(savedTheme);
     </script>
 </body>
 </html>
